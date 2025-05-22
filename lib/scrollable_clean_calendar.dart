@@ -86,6 +86,9 @@ class ScrollableCleanCalendar extends StatefulWidget {
   /// The controller of ScrollableCleanCalendar
   final CleanCalendarController calendarController;
 
+  /// The footer of ScrollableCleanCalendar
+  final Widget? footer;
+
   const ScrollableCleanCalendar({
     this.locale = 'en',
     this.scrollController,
@@ -112,6 +115,7 @@ class ScrollableCleanCalendar extends StatefulWidget {
     this.dayAspectRatio,
     this.dayRadius = 6,
     required this.calendarController,
+    this.footer,
   }) : assert(layout != null ||
             (monthBuilder != null &&
                 weekdayBuilder != null &&
@@ -145,32 +149,40 @@ class _ScrollableCleanCalendarState extends State<ScrollableCleanCalendar> {
   }
 
   Widget listViewCalendar() {
+    final months = widget.calendarController.months;
+    final hasFooter = widget.footer != null;
     return ListView.separated(
       controller: widget.scrollController,
       padding: widget.padding ??
           const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
       separatorBuilder: (_, __) =>
           SizedBox(height: widget.spaceBetweenCalendars),
-      itemCount: widget.calendarController.months.length,
+      itemCount: months.length + (hasFooter ? 1 : 0),
       itemBuilder: (context, index) {
-        final month = widget.calendarController.months[index];
-
+        if (hasFooter && index == months.length) {
+          return widget.footer!;
+        }
+        final month = months[index];
         return childCollumn(month);
       },
     );
   }
 
   Widget scrollablePositionedListCalendar() {
+    final months = widget.calendarController.months;
+    final hasFooter = widget.footer != null;
     return ScrollablePositionedList.separated(
       itemScrollController: widget.calendarController.itemScrollController,
       padding: widget.padding ??
           const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
       separatorBuilder: (_, __) =>
           SizedBox(height: widget.spaceBetweenCalendars),
-      itemCount: widget.calendarController.months.length,
+      itemCount: months.length + (hasFooter ? 1 : 0),
       itemBuilder: (context, index) {
-        final month = widget.calendarController.months[index];
-
+        if (hasFooter && index == months.length) {
+          return widget.footer!;
+        }
+        final month = months[index];
         return childCollumn(month);
       },
     );
